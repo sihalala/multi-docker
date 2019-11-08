@@ -1,27 +1,20 @@
 sudo: required
 services:
-  - docker
-
+- docker
 before_install:
-  - docker build -t haavrilyars/react-test -f ./client/Dockerfile.dev ./client
-
+- docker build -t haavrilyars/react-test -f ./client/Dockerfile.dev ./client
 script:
-  - docker run -e CI=true haavrilyars/react-test npm test -- --coverage
-
+- docker run -e CI=true haavrilyars/react-test npm test -- --coverage
 after_success:
-  - docker build -t haavrilyars/multi-client ./client
-  - docker build -t haavrilyars/multi-nginx ./nginx
-  - docker build -t haavrilyars/multi-server ./server
-  - docker build -t haavrilyars/multi-worker ./worker
-
-  # login to docker cli
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # take those images and push them to docker hub
-  - docker push haavrilyars/multi-client
-  - docker push haavrilyars/multi-nginx
-  - docker push haavrilyars/multi-server
-  - docker push haavrilyars/multi-worker
-
+- docker build -t haavrilyars/multi-client ./client
+- docker build -t haavrilyars/multi-nginx ./nginx
+- docker build -t haavrilyars/multi-server ./server
+- docker build -t haavrilyars/multi-worker ./worker
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+- docker push haavrilyars/multi-client
+- docker push haavrilyars/multi-nginx
+- docker push haavrilyars/multi-server
+- docker push haavrilyars/multi-worker
 deploy:
   provider: elasticbeanstalk
   region: us-east-2
@@ -31,6 +24,7 @@ deploy:
   bucket_path: multi-docker
   on:
     branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key:
-    secure: "$AWS_SECRET_KEY"
+env:
+  global:
+  - secure: F1UW/3DZ5ghhTKkhchIfsRrnwfj+1zdsmjtV7c/AQNuA+J/jZBnT3YfvzQRD92JTZB3yANLb0lpxsozWptLxXRhNPJrWkYIZhfeoy5s7K/KNwyN5e/BQP8/qfKVioBzmUQxaqTJuKScq7uKhksW61NRs4VsnmLV3di5ncWHD/Zret/p6eqEsAgV+fENkKRQzoWBwCw5f6Q7Ftm/W+qK35geBHX/fgiNFVD4pTWaoeRsr6O7tjJFufd6UQHtvUH6mL3IT0P0D26yRM1hARNMbyFyf06IrhnJZTLsr9gsau+EmBtXBFO/oJIoh9usKq+MgejysJbgsDATiJhceWbAqj5N1+wpgP4r1ipeua09AOwY1S9vV5xd94mJO7nNP49JehcGfJtDK4d26mcEG66W+CBp9K3Iqm2SEljvKgDQcaeF8CgtlqSycYdrW83gLK15c3EqCmYwPfZYumeYuItGVnLl1D6zBQvftiYA63NKZvZNPz2H6d1V+tzZKyspWquniZ+fR2W6gmLon1LUa5fg5ekqyzSgE9/Vuws0IaQQZ/uaMxZutV5iCAtENG77HLcyXKNX3J19f5i5HNUNN6oWnCvwXBj9vavNrJHN+wRC/qnRVFA/+5o5+3PiMe9ba+4j5WSZwnRyqHWZqnQ/FctzK4nm4b6ETiG1r30mrlu5sGeA=
+  - secure: RTrLwZHGDoKuXO5EH/i+J+/H9wkrk8xZlPKfCn1AdmLp4WA5J7X2zZJuXoPXsoP0QaVMciZWuziOmEeDuyn2ADXuA1Rb9GuL0vZtdF2cKkCE0AFdzK21jk1rebJdeAbTn9bO5/kwekNfCC9AdbBs1iN3Vj+XrALQyA8SJTT1qJBL5XsHwquGgVmqkGGQTznKEIGNVGtw3bdZfdlC8hxflVCcJW+ClRJoyNISkEZXsGrGeKzpq1kic1IjMNPjP1P9+SU7iCu1Z3U5Et8ygLZY/BhhxymKigLtcCkfknOxnPa5dvdXRGqnsxWhMhaVnY6glbyhdQZCLgnmx+RvR7oYY12Ph3B6IGEJgNcBsufZDaDOq9DoQQtjwtp6Hm+DwPFrNQ2/kDhc/tz3LjubFst3tBXMEo2g1v03w663wELwqkTa1lMDI/jpYI8ENOacbqV93mapkyCq8G45NrDKztwFhnefxbAQ3q5An0oMTQhGV6lA9SsA0omeTXcf4WhG9vw7HUy5pSBP3aUnvA4G+7bU0GQfYhWgU+8cOA7yT9PpaqHbqFMXn5Mko/+hqaIQRbt23g5wnr5DaxNfkeDdy/ifXv2ruPRGLEUWdlJY+SvcIU5LBrp93lSfnrYoR7HllEDqi13FmDsyWWRD38YYvALWO3YAlYvGJgrze/oXa5KOZxA=
